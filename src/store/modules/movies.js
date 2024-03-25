@@ -5,7 +5,7 @@ import mutations from "../mutations";
 const serializedResponse = (movies) =>
   movies.reduce((acc, movie) => ((acc[movie.imdbID] = movie), acc), {});
 
-const { MOVIES } = mutations;
+const { MOVIES, CURRENT_PAGE } = mutations;
 
 const moviesStore = {
   namespaced: true,
@@ -22,11 +22,15 @@ const moviesStore = {
         top250IDs.slice(from, to),
     currentPage: ({ currentPage }) => currentPage,
     moviesPerPage: ({ moviesPerPage }) => moviesPerPage,
+    totalMovie: ({ top250IDs }) => top250IDs.length,
     moviesList: ({ movies }) => movies,
   },
   mutations: {
     [MOVIES](state, value) {
       state.movies = value;
+    },
+    [CURRENT_PAGE](state, value) {
+      state.currentPage = value;
     },
   },
   actions: {
@@ -51,6 +55,10 @@ const moviesStore = {
       } catch (err) {
         console.log(err);
       }
+    },
+    changeCurrentPage({ commit, dispatch }, pageNumber) {
+      commit(CURRENT_PAGE, pageNumber);
+      dispatch("fetchMovies");
     },
   },
 };
