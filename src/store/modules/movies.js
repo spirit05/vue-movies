@@ -5,7 +5,7 @@ import mutations from "../mutations";
 const serializedResponse = (movies) =>
   movies.reduce((acc, movie) => ((acc[movie.imdbID] = movie), acc), {});
 
-const { MOVIES, CURRENT_PAGE } = mutations;
+const { MOVIES, CURRENT_PAGE, DELETE_MOVIE, TOGGLE_SEARCH } = mutations;
 
 const moviesStore = {
   namespaced: true,
@@ -14,6 +14,7 @@ const moviesStore = {
     moviesPerPage: 12,
     currentPage: 1,
     movies: {},
+    isSearch: false,
   },
   getters: {
     slicesIDs:
@@ -24,6 +25,8 @@ const moviesStore = {
     moviesPerPage: ({ moviesPerPage }) => moviesPerPage,
     totalMovie: ({ top250IDs }) => top250IDs.length,
     moviesList: ({ movies }) => movies,
+    top250IDs: ({ top250IDs }) => top250IDs,
+    isSearch: ({ isSearch }) => isSearch,
   },
   mutations: {
     [MOVIES](state, value) {
@@ -31,6 +34,12 @@ const moviesStore = {
     },
     [CURRENT_PAGE](state, value) {
       state.currentPage = value;
+    },
+    [DELETE_MOVIE](state, index) {
+      state.top250IDs.splice(index, 1);
+    },
+    [TOGGLE_SEARCH](state, value) {
+      state.isSearch = value;
     },
   },
   actions: {
@@ -56,6 +65,34 @@ const moviesStore = {
     changeCurrentPage({ commit, dispatch }, pageNumber) {
       commit(CURRENT_PAGE, pageNumber);
       dispatch("fetchMovies");
+    },
+    deleteMovie({ commit, getters, dispatch }, id) {
+      const index = getters.top250IDs.indexOf(id);
+      if (index !== -1) {
+        commit(DELETE_MOVIE, index);
+        dispatch("fetchMovies");
+      }
+    },
+    async searchMovie({ commit, dispatch }, query) {
+      try {
+        dispatch("toggleLoader", true, { root: true });
+
+        const response = await axios.get(`/?s=${query}`);
+
+        if (response.Error) {
+          throw Error(response.Error);
+        }
+
+        const movies = serializedResponse(response.Search);
+        commit(MOVIES, movies);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        dispatch("toggleLoader", false, { root: true });
+      }
+    },
+    toggleSearh({ commit }, bool) {
+      commit(TOGGLE_SEARCH, bool);
     },
   },
 };
