@@ -53,7 +53,7 @@ export default {
     selectedMovieId: "",
   }),
   computed: {
-    ...mapGetters("movies", ["isSearch", "searchTitle"]),
+    ...mapGetters(["isSearch", "searchTitle"]),
     isExist() {
       return Boolean(Object.keys(this.list).length);
     },

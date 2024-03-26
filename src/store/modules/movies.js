@@ -5,8 +5,7 @@ import mutations from "../mutations";
 const serializedResponse = (movies) =>
   movies.reduce((acc, movie) => ((acc[movie.imdbID] = movie), acc), {});
 
-const { MOVIES, CURRENT_PAGE, DELETE_MOVIE, TOGGLE_SEARCH, SEARCH_TITLE } =
-  mutations;
+const { MOVIES, CURRENT_PAGE, DELETE_MOVIE } = mutations;
 
 const moviesStore = {
   namespaced: true,
@@ -15,8 +14,6 @@ const moviesStore = {
     moviesPerPage: 12,
     currentPage: 1,
     movies: {},
-    isSearch: false,
-    searchTitle: "",
   },
   getters: {
     slicesIDs:
@@ -28,8 +25,6 @@ const moviesStore = {
     totalMovie: ({ top250IDs }) => top250IDs.length,
     moviesList: ({ movies }) => movies,
     top250IDs: ({ top250IDs }) => top250IDs,
-    isSearch: ({ isSearch }) => isSearch,
-    searchTitle: ({ searchTitle }) => searchTitle,
   },
   mutations: {
     [MOVIES](state, value) {
@@ -40,12 +35,6 @@ const moviesStore = {
     },
     [DELETE_MOVIE](state, index) {
       state.top250IDs.splice(index, 1);
-    },
-    [TOGGLE_SEARCH](state, value) {
-      state.isSearch = value;
-    },
-    [SEARCH_TITLE](state, value) {
-      state.searchTitle = value;
     },
   },
   actions: {
@@ -90,7 +79,6 @@ const moviesStore = {
         }
 
         const movies = serializedResponse(response.Search);
-        commit(SEARCH_TITLE, query);
         commit(MOVIES, movies);
       } catch (err) {
         console.log(err);
@@ -103,16 +91,10 @@ const moviesStore = {
           },
           { root: true }
         );
-        commit(TOGGLE_SEARCH, false);
+        dispatch("toggleSearch", false, { root: true });
       } finally {
         dispatch("toggleLoader", false, { root: true });
       }
-    },
-    toggleSearh({ commit }, bool) {
-      commit(TOGGLE_SEARCH, bool);
-    },
-    changeSearchTitle({ commit }, value) {
-      commit(SEARCH_TITLE, value);
     },
   },
 };
