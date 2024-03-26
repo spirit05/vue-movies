@@ -17,6 +17,7 @@ const searchStore = {
     },
     [TOGGLE_SEARCH](state, value) {
       state.isSearch = value;
+      if (!value) state.searchTitle = "";
     },
   },
   actions: {
