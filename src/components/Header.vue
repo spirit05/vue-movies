@@ -6,6 +6,7 @@
         <BNavForm>
           <BFormInput
             class="mr-sm-2 search-input"
+            autocomplete="off"
             placeholder="Search"
             v-model="searchValue"
             debounce="500"

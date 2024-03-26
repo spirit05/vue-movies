@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <Notification />
     <Header />
     <Loader />
     <PosterBg :poster="posterBg" />
@@ -20,15 +21,17 @@ import PosterBg from "@/components/PosterBg";
 import MoviesPagination from "@/components/MoviesPagination";
 import Loader from "@/components/Loader";
 import Header from "@/components/Header";
+import Notification from "@/components/Notification";
 
 export default {
   name: "App",
   components: {
-    MoviesList,
-    PosterBg,
-    MoviesPagination,
-    Loader,
     Header,
+    Loader,
+    PosterBg,
+    MoviesList,
+    Notification,
+    MoviesPagination,
   },
   data: () => ({
     posterBg: "",

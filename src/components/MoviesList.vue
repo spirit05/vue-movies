@@ -34,16 +34,19 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("movies", ["isSearch"]),
+    ...mapGetters("movies", ["isSearch", "searchTitle"]),
     isExist() {
       return Boolean(Object.keys(this.list).length);
     },
     title() {
-      return this.isSearch ? "Search result" : "IMDB Top 250";
+      return this.isSearch
+        ? `Search result: ${this.searchTitle}`
+        : "IMDB Top 250";
     },
   },
   methods: {
     ...mapActions("movies", ["deleteMovie"]),
+    ...mapActions(["showNotify"]),
     onMouseover(poster) {
       this.$emit("changePoster", poster);
     },
@@ -53,6 +56,11 @@ export default {
       );
       if (confirm) {
         this.deleteMovie(id);
+        this.showNotify({
+          msg: `"${title}" deleted successful!`,
+          variant: "success",
+          title: "Success",
+        });
       }
     },
   },
