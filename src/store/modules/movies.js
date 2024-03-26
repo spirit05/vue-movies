@@ -41,6 +41,7 @@ const moviesStore = {
     async fetchMovies({ getters, commit, dispatch }) {
       try {
         dispatch("toggleLoader", true, { root: true });
+        dispatch("toggleSearch", false, { root: true });
         const { currentPage, moviesPerPage, slicesIDs } = getters;
         const from = currentPage * moviesPerPage - moviesPerPage;
         const to = currentPage * moviesPerPage;
